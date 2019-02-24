@@ -140,7 +140,6 @@ determined by a predicate function.
 
 ```javascript
 const filtered = quadtree.filter(element => element.x > 50);
-)
 ```
 
 _Opposite: quadtree.reject_
