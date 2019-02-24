@@ -4,7 +4,6 @@ interface ElementRect {
   y: number;
   width?: number;
   height?: number;
-  [extras: string]: any;
 }
 
 interface QuadTreeUserOptions {
@@ -36,19 +35,19 @@ class QuadTree implements ElementRect {
     SE: LazyQuadTree;
   };
 
-  // The quadtree constructor accepts a single parameter object containing the following properties :
-  // - width / length : dimensions of the quadtree. [ *mandatory* ]
-  // - maxElements : the maximum number of elements before the leaf 'splits' into subtrees. [ *defaults to 1* ]
-  // - x / y : these coordinates are used internally by the library to position subtrees.
   constructor({ x, y, width, height, maxElements }: QuadTreeUserOptions) {
+    // width / length : dimensions of the quadtree. [ *mandatory* ]
     this.width = width;
     this.height = height;
+    // x / y : coordinates are used internally by the library to position subtrees.
+    this.x = x || 0;
+    this.y = y || 0;
+    // maxElements : the maximum number of elements before the leaf 'splits' into subtrees. [ *defaults to 1* ]
+    this.maxElements = maxElements || 1;
+
     if (this.width == null || this.height == null) {
       throw new Error("Missing quadtree dimensions.");
     }
-    this.x = x || 0;
-    this.y = y || 0;
-    this.maxElements = maxElements || 1;
     this.contents = [];
     this.oversized = [];
     this.size = 0;
@@ -133,7 +132,7 @@ class QuadTree implements ElementRect {
     }
   }
 
-  // Removes all elements from the quadtree and restores it to pristine state.
+  // Removes all elements from the quadtree
   public clear() {
     this.contents = [];
     this.oversized = [];
@@ -148,7 +147,8 @@ class QuadTree implements ElementRect {
   }
 
   // Add an element to the quadtree.
-  // Elements can be observed to reorganize them into the quadtree automatically whenever their coordinates or dimensions are set (for ex. obj.x = ...).
+  // Elements can be observed to reorganize them into the quadtree automatically whenever
+  // their coordinates or dimensions are set (for ex. obj.x = ...).
   public push(item: ElementRect, doObserve: boolean = false): this {
     return this.pushAll([item], doObserve);
   }
@@ -261,14 +261,6 @@ class QuadTree implements ElementRect {
 
   // Returns an array of elements which collides with the `item` argument.
   // `item` being an object having x, y, width & height properties.
-
-  // The default collision function is a basic bounding box algorithm.
-  // You can change it by providing a function as a second argument.
-  //```javascript
-  //colliding({x: 10, y: 20}, function(element1, element2) {
-  //    return // Place predicate here //
-  //})
-  //```
   public colliding(
     item: ElementRect,
     collisionFunction = boundingBoxCollision
@@ -324,17 +316,6 @@ class QuadTree implements ElementRect {
 
   // Performs an action on elements which collides with the `item` argument.
   // `item` being an object having x, y, width & height properties.
-
-  // The default collision function is a basic bounding box algorithm.
-  // You can change it by providing a function as a third argument.
-  //```javascript
-  //onCollision(
-  //    {x: 10, y: 20},
-  //    function(item) { /* stuff */ },
-  //    function(element1, element2) {
-  //        return // Place predicate here //
-  //})
-  //```
   public onCollision(
     item: ElementRect,
     callback: (el: ElementRect) => unknown,
@@ -388,10 +369,6 @@ class QuadTree implements ElementRect {
     return null;
   }
 
-  // Alias of `where`.
-  get(query: ElementRect) {
-    return this.where(query);
-  }
   // Returns an array of elements that match the `query` argument.
   where(query: ElementRect) {
     // Naïve parsing (missing coordinates)
@@ -450,9 +427,6 @@ class QuadTree implements ElementRect {
   }
 
   // For each element of the quadtree, performs the `action` function.
-  //```javascript
-  //quad.each(function(item) { console.log(item) })
-  //```
   each(action: (i: ElementRect) => unknown) {
     const fifo = [this];
 
@@ -507,7 +481,7 @@ class QuadTree implements ElementRect {
     return items;
   }
 
-  // Returns a **cloned** `Quadtree` object which contains only the elements that validate the predicate.
+  // Returns a **cloned** `QuadTree` which contains only the elements that validate the predicate.
   filter(predicate: Function) {
     const deepclone = target => {
       let item;
@@ -588,7 +562,7 @@ class QuadTree implements ElementRect {
   // Pretty printing function.
   pretty() {
     let str = "";
-    const indent = function(level) {
+    const indent = function(level: number) {
       let res = "";
       for (
         let times = level, asc = level <= 0;
@@ -715,8 +689,9 @@ const calculateDirection = (element: ElementRect, tree: QuadTree) => {
     }
   }
 };
+
 // Returns splitted coordinates and dimensions.
-const splitTree = tree => {
+const splitTree = (tree: QuadTree) => {
   const leftWidth = Math.max(Math.floor(tree.width / 2), 1);
   const rightWidth = Math.ceil(tree.width / 2);
   const topHeight = Math.max(Math.floor(tree.height / 2), 1);

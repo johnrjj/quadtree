@@ -48,7 +48,6 @@ Tooltips can show up in arbitrary places on a webpage, with arbitrary dimensions
 
 - 4K resolutions imply a 4K \* 4K search space, as we need pixel-level positioning granularity. With a naive implementation, the space complexity is usually exponential i.e. O(n^2). Without proper architecture, the memory requirements become too large.
 
-
 Being able to place tooltips in an {x,y} Cartesian coordinate system, and quickly detect collisions for incoming and existing tooltips allows for performantly displaying multiple tooltips on a page.
 
 #### Other considerations
@@ -196,8 +195,6 @@ const match = quadtree.where({
   foo: "bar"
 });
 ```
-
-_Alias : quadtree.get_
 
 ### Retrieve by predicate
 
