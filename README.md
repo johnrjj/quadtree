@@ -38,18 +38,18 @@ To place multiple tooltips so that they do not overlap, we need
 - an algorithm that is capable of finding potential collisions in a 2D search space efficiently and quickly.
 - (not part of this package) a way to 'best guess' a tooltip position and resolve conflicts and correctly place a tooltip
 
-In normal UX, when a tooltip is triggered, the tooltip needs to be positioned near instantly, so finding a valid position for a tooltip needs to be fast.
+In normal UX, when a tooltip is triggered, the tooltip needs to be dynamically positioned near instantly, so finding a valid position for a tooltip needs to be fast.
 
 #### What makes it tricky?
 
 - Multiple tooltips on the page, in arbitrary places
 
-Tooltips can show up in arbitrary places on a webpage, with arbitrary dimensions and contents. I needed a flexible system for placing, moving, and removing 2D objects.
+Tooltips can show up in arbitrary places on a webpage, with arbitrary dimensions and contents. I needed a flexible system for placing, moving, comparing, traversing, and removing 2D objects.
 
 - 4K resolutions imply a 4K \* 4K search space -- O(n^2) space complexity)
   As we need pixel-level granularity. Without proper architecture, the memory requirements become too large.
 
-Being able to place tooltips in an x,y coordinate system, and quickly detect collisions for incoming and existing tooltips allows for performantly displaying multiple tooltips on a page.
+Being able to place tooltips in an {x,y} Cartesian coordinate system, and quickly detect collisions for incoming and existing tooltips allows for performantly displaying multiple tooltips on a page.
 
 #### Other considerations
 
