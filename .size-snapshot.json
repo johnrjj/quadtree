@@ -1,0 +1,36 @@
+{
+  "/Users/johnjohnson/dev/quadtree/dist/quadtree.cjs.development.js": {
+    "bundled": 23664,
+    "minified": 7731,
+    "gzipped": 2288
+  },
+  "/Users/johnjohnson/dev/quadtree/dist/quadtree.cjs.production.js": {
+    "bundled": 23664,
+    "minified": 7731,
+    "gzipped": 2288
+  },
+  "/Users/johnjohnson/dev/quadtree/dist/quadtree.umd.development.js": {
+    "bundled": 25190,
+    "minified": 7539,
+    "gzipped": 2341
+  },
+  "/Users/johnjohnson/dev/quadtree/dist/quadtree.umd.production.js": {
+    "bundled": 25190,
+    "minified": 7539,
+    "gzipped": 2341
+  },
+  "/Users/johnjohnson/dev/quadtree/dist/quadtree.es.production.js": {
+    "bundled": 23641,
+    "minified": 7709,
+    "gzipped": 2278,
+    "treeshaked": {
+      "rollup": {
+        "code": 0,
+        "import_statements": 0
+      },
+      "webpack": {
+        "code": 951
+      }
+    }
+  }
+}
