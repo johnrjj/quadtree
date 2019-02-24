@@ -1,6 +1,6 @@
 ## Overview
 
-A blazing fast, space-efficient [quadtree](https://en.wikipedia.org/wiki/Quadtree) written in TypeScript. No dependencies, works on both Node and the browser.
+A blazing fast, space-efficient (quadtree)[https://en.wikipedia.org/wiki/Quadtree] written in TypeScript. No dependencies, works on both Node and the browser.
 
 ## Motivation
 
@@ -47,11 +47,11 @@ Tooltips can show up in arbitrary places on a webpage, with arbitrary dimensions
 
 Being able to place tooltips in an x,y coordinate system, and quickly detect collisions for incoming and existing tooltips allows for performantly displaying multiple tooltips on a page.
 
-Other alternatives considered were (Spatial hashing)[http://zufallsgenerator.github.io/2014/01/26/visually-comparing-algorithms/].
+Other alternatives considered were (spatial hashing)[http://zufallsgenerator.github.io/2014/01/26/visually-comparing-algorithms/]
 
 ## Prior Art
 
-Implementation and parts of README borrowed from (quadtree-lib)[https://github.com/elbywan/quadtree-lib], which I've updated and further customized.
+Implementation and parts of README borrowed from (quadtree-lib)[https://github.com/elbywan/quadtree-lib] which I've updated and further customized.
 
 ## Usage
 
