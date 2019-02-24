@@ -57,7 +57,7 @@ Other alternative considered was [spatial hashing](http://zufallsgenerator.githu
 
 ## Prior Art
 
-Implementation and parts of README borrowed from [quadtree-lib](https://github.com/elbywan/quadtree-lib) which I've updated and further customized.
+Implementation borrowed from [quadtree-lib](https://github.com/elbywan/quadtree-lib) which I've updated and started to further customize.
 
 ## Usage
 
