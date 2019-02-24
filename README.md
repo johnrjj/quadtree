@@ -36,7 +36,9 @@ To place multiple tooltips so that they do not overlap, we need
 - an algorithm that is capable of finding potential collisions in a 2D search space efficiently and quickly.
 - (not part of this package) a way to 'best guess' a tooltip position and resolve conflicts and correctly place a tooltip
 
-In normal UX, when a tooltip is triggered, the tooltip needs to be positioned near instantly, so finding a valid position for a tooltip needs to be fast. What makes it tricky?
+In normal UX, when a tooltip is triggered, the tooltip needs to be positioned near instantly, so finding a valid position for a tooltip needs to be fast.
+
+#### What makes it tricky?
 
 - Multiple tooltips on the page, in arbitrary places
 
@@ -47,7 +49,9 @@ Tooltips can show up in arbitrary places on a webpage, with arbitrary dimensions
 
 Being able to place tooltips in an x,y coordinate system, and quickly detect collisions for incoming and existing tooltips allows for performantly displaying multiple tooltips on a page.
 
-Other alternatives considered were (spatial hashing)[http://zufallsgenerator.github.io/2014/01/26/visually-comparing-algorithms/]
+#### Other considerations
+
+Other alternative considered was (spatial hashing)[http://zufallsgenerator.github.io/2014/01/26/visually-comparing-algorithms/] which is a popular game development solution which builds a 2D hash map.
 
 ## Prior Art
 
