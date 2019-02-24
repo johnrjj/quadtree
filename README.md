@@ -1,6 +1,6 @@
 ## Overview
 
-A blazing fast, space-efficient (quadtree)[https://en.wikipedia.org/wiki/Quadtree] written in TypeScript. No dependencies, works on both Node and the browser.
+A blazing fast, space-efficient [quadtree](https://en.wikipedia.org/wiki/Quadtree]) written in TypeScript. No dependencies, works on both Node and the browser.
 
 ## Motivation
 
@@ -51,11 +51,11 @@ Being able to place tooltips in an x,y coordinate system, and quickly detect col
 
 #### Other considerations
 
-Other alternative considered was (spatial hashing)[http://zufallsgenerator.github.io/2014/01/26/visually-comparing-algorithms/] which is a popular game development solution which builds a 2D hash map.
+Other alternative considered was [spatial hashing](http://zufallsgenerator.github.io/2014/01/26/visually-comparing-algorithms/) which is a popular game development solution which builds a 2D hash map.
 
 ## Prior Art
 
-Implementation and parts of README borrowed from (quadtree-lib)[https://github.com/elbywan/quadtree-lib] which I've updated and further customized.
+Implementation and parts of README borrowed from [quadtree-lib](https://github.com/elbywan/quadtree-lib]) which I've updated and further customized.
 
 ## Usage
 
