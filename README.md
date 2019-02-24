@@ -1,8 +1,6 @@
 ## Overview
 
-A [quadtree](https://en.wikipedia.org/wiki/Quadtree) written in TypeScript.
-
-A quadtree
+A blazing fast, space-efficient [quadtree](https://en.wikipedia.org/wiki/Quadtree) written in TypeScript. No dependencies, works on both Node and the browser.
 
 ## Motivation
 
