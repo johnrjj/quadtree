@@ -16,7 +16,7 @@
     "prettier": "prettier --write '**/*.{js,ts,tsx,json,md,yml}'"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.6",
+    "@types/jest": "^24.0.8",
     "prettier": "^1.16.4",
     "tsdx": "^0.3.3",
     "typescript": "^3.3.3333"

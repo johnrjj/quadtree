@@ -1,4 +1,4 @@
-interface ElementRect {
+export interface BasicRectangle {
   // x, y are bottom left, width and height are additive.
   x: number;
   y: number;
@@ -6,7 +6,7 @@ interface ElementRect {
   height?: number;
 }
 
-interface QuadTreeUserOptions {
+export interface QuadTreeUserOptions {
   width: number;
   height: number;
   x?: number;
@@ -14,25 +14,25 @@ interface QuadTreeUserOptions {
   maxElements?: number;
 }
 
-interface LazyQuadTree {
-  create: () => QuadTree;
-  tree: QuadTree | null;
+export interface LazyQuadTree<T extends BasicRectangle> {
+  create: () => QuadTree<T>;
+  tree: QuadTree<T> | null;
 }
 
-class QuadTree implements ElementRect {
+class QuadTree<T extends BasicRectangle> implements BasicRectangle {
   x: number;
   y: number;
   width: number;
   height: number;
   private maxElements: number;
-  private contents: Array<ElementRect>;
-  private oversized: Array<ElementRect>;
+  private contents: Array<T>;
+  private oversized: Array<T>;
   private size: number;
   private children: {
-    NW: LazyQuadTree;
-    NE: LazyQuadTree;
-    SW: LazyQuadTree;
-    SE: LazyQuadTree;
+    NW: LazyQuadTree<T>;
+    NE: LazyQuadTree<T>;
+    SW: LazyQuadTree<T>;
+    SE: LazyQuadTree<T>;
   };
 
   constructor({ x, y, width, height, maxElements }: QuadTreeUserOptions) {
@@ -149,12 +149,12 @@ class QuadTree implements ElementRect {
   // Add an element to the quadtree.
   // Elements can be observed to reorganize them into the quadtree automatically whenever
   // their coordinates or dimensions are set (for ex. obj.x = ...).
-  public push(item: ElementRect, doObserve: boolean = false): this {
+  public push(item: T, doObserve: boolean = false): QuadTree<T> {
     return this.pushAll([item], doObserve);
   }
 
   // Push an array of elements.
-  public pushAll(items: Array<ElementRect>, doObserve: boolean = false): this {
+  public pushAll(items: Array<T>, doObserve: boolean = false): QuadTree<T> {
     for (let item of Array.from(items)) {
       validateElement(item);
       if (doObserve) {
@@ -167,8 +167,8 @@ class QuadTree implements ElementRect {
     while (fifo.length > 0) {
       var direction;
       const { tree, elements } = fifo.shift() as {
-        tree: QuadTree;
-        elements: Array<ElementRect>;
+        tree: QuadTree<T>;
+        elements: Array<T>;
       };
 
       const fifoCandidates = { NW: null, NE: null, SW: null, SE: null };
@@ -220,7 +220,7 @@ class QuadTree implements ElementRect {
   }
 
   // Removes an element from the quadtree.
-  public remove(item: ElementRect, stillObserve: boolean): boolean {
+  public remove(item: T, stillObserve: boolean): boolean {
     validateElement(item);
 
     let index = this.oversized.indexOf(item);
@@ -261,17 +261,14 @@ class QuadTree implements ElementRect {
 
   // Returns an array of elements which collides with the `item` argument.
   // `item` being an object having x, y, width & height properties.
-  public colliding(
-    item: ElementRect,
-    collisionFunction = boundingBoxCollision
-  ) {
+  public colliding(item: T, collisionFunction = boundingBoxCollision) {
     validateElement(item);
-    const items: Array<ElementRect> = [];
+    const items: Array<T> = [];
     const fifo = [this];
 
     while (fifo.length > 0) {
-      let elt: ElementRect;
-      const top = fifo.shift() as QuadTree;
+      let elt: T;
+      const top = fifo.shift() as QuadTree<T>;
 
       for (elt of Array.from(top.oversized)) {
         if (elt !== item && collisionFunction(item, elt)) {
@@ -317,16 +314,16 @@ class QuadTree implements ElementRect {
   // Performs an action on elements which collides with the `item` argument.
   // `item` being an object having x, y, width & height properties.
   public onCollision(
-    item: ElementRect,
-    callback: (el: ElementRect) => unknown,
+    item: BasicRectangle,
+    callback: (el: BasicRectangle) => unknown,
     collisionFunction = boundingBoxCollision
   ) {
     validateElement(item);
 
-    const fifo: Array<QuadTree> = [this];
+    const fifo: Array<QuadTree<T>> = [this];
     while (fifo.length > 0) {
-      let elt: ElementRect;
-      const top = fifo.shift() as QuadTree;
+      let elt: BasicRectangle;
+      const top = fifo.shift() as QuadTree<T>;
 
       for (elt of Array.from(top.oversized)) {
         if (elt !== item && collisionFunction(item, elt)) {
@@ -370,7 +367,7 @@ class QuadTree implements ElementRect {
   }
 
   // Returns an array of elements that match the `query` argument.
-  where(query: ElementRect) {
+  where(query: any): Array<T> {
     // Naïve parsing (missing coordinates)
     if (typeof query === "object" && (query.x == null || query.y == null)) {
       return this.find(function(elt) {
@@ -386,13 +383,15 @@ class QuadTree implements ElementRect {
 
     // Optimised parsing
     validateElement(query);
-    const items: Array<ElementRect> = [];
-    const fifo: Array<QuadTree> = [this];
+    const items: Array<T> = [];
+    const fifo: Array<QuadTree<T>> = [this];
 
     while (fifo.length > 0) {
-      let check: boolean, elt: ElementRect, key: string | number;
-      const top = fifo.shift() as QuadTree;
+      let check: boolean;
+      let elt: T;
+      let key: string | number;
 
+      const top = fifo.shift() as QuadTree<T>;
       for (elt of Array.from(top.oversized)) {
         check = true;
         for (key in query) {
@@ -427,12 +426,12 @@ class QuadTree implements ElementRect {
   }
 
   // For each element of the quadtree, performs the `action` function.
-  each(action: (i: ElementRect) => unknown) {
+  each(action: (i: T) => void): QuadTree<T> {
     const fifo = [this];
 
     while (fifo.length > 0) {
-      var i;
-      const top = fifo.shift() as QuadTree;
+      let i: T;
+      const top = fifo.shift() as QuadTree<T>;
       for (i of Array.from(top.oversized)) {
         if (typeof action === "function") {
           action(i);
@@ -454,13 +453,13 @@ class QuadTree implements ElementRect {
   }
 
   // Returns an array of elements which validates the predicate.
-  find(predicate: (i: ElementRect) => boolean) {
+  find(predicate: (i: T) => boolean): Array<T> {
     const fifo = [this];
     const items: Array<any> = [];
 
     while (fifo.length > 0) {
-      let i: ElementRect;
-      const top = fifo.shift() as QuadTree;
+      let i: T;
+      const top = fifo.shift() as QuadTree<T>;
       for (i of Array.from(top.oversized)) {
         if (typeof predicate === "function" ? predicate(i) : undefined) {
           items.push(i);
@@ -482,7 +481,7 @@ class QuadTree implements ElementRect {
   }
 
   // Returns a **cloned** `QuadTree` which contains only the elements that validate the predicate.
-  filter(predicate: Function) {
+  filter(predicate: (i: T) => boolean): QuadTree<T> {
     const deepclone = target => {
       let item;
       const copycat = new QuadTree({
@@ -532,14 +531,13 @@ class QuadTree implements ElementRect {
       }
     };
 
-    return deepclone(this);
+    return deepclone(this) as QuadTree<T>;
   }
 
   // Opposite of filter.
-  reject(predicate: (i: ElementRect) => boolean) {
+  reject(predicate: (i: T) => boolean) {
     return this.filter(
-      (i: ElementRect) =>
-        !(typeof predicate === "function" ? predicate(i) : undefined)
+      (i: T) => !(typeof predicate === "function" ? predicate(i) : undefined)
     );
   }
 
@@ -548,7 +546,7 @@ class QuadTree implements ElementRect {
   visit(action: Function) {
     const fifo = [this];
     while (fifo.length > 0) {
-      const that = fifo.shift() as QuadTree;
+      const that = fifo.shift() as QuadTree<T>;
       action.bind(that)();
       for (let child in that.children) {
         if (that.children[child].tree != null) {
@@ -619,7 +617,7 @@ ${indentation}|   ${top.tree.contents}\n\
 }
 
 // Add getters and setters for coordinates and dimensions properties in order to automatically reorganize the elements on change.
-const observe = (item: ElementRect, tree: QuadTree) => {
+const observe = <T extends BasicRectangle>(item: T, tree: QuadTree<T>) => {
   const writeAccessors = function(propName) {
     item[`_${propName}`] = item[propName];
     return Object.defineProperty(item, propName, {
@@ -641,7 +639,7 @@ const observe = (item: ElementRect, tree: QuadTree) => {
 };
 
 // Remove getters and setters and restore previous properties
-const unobserve = (item: any) => {
+const unobserve = <T extends BasicRectangle>(item: T) => {
   const unwriteAccessors = function(propName: string) {
     if (item[`_${propName}`] == null) {
       return;
@@ -657,13 +655,13 @@ const unobserve = (item: any) => {
 };
 
 // Retrieves the center coordinates of a rectangle.
-const getCenter = (item: ElementRect) => ({
+const getCenter = <T extends BasicRectangle>(item: T) => ({
   x: Math.floor((item.width != null ? item.width : 1) / 2) + item.x,
   y: Math.floor((item.height != null ? item.height : 1) / 2) + item.y
 });
 
 // Bounding box collision algorithm.
-const boundingBoxCollision = (elt1: ElementRect, elt2: ElementRect) =>
+const boundingBoxCollision = <T extends BasicRectangle>(elt1: T, elt2: T) =>
   !(
     elt1.x >= elt2.x + (elt2.width != null ? elt2.width : 1) ||
     elt1.x + (elt1.width != null ? elt1.width : 1) <= elt2.x ||
@@ -672,7 +670,10 @@ const boundingBoxCollision = (elt1: ElementRect, elt2: ElementRect) =>
   );
 
 // Determines which subtree an element belongs to.
-const calculateDirection = (element: ElementRect, tree: QuadTree) => {
+const calculateDirection = <T extends BasicRectangle>(
+  element: T,
+  tree: QuadTree<T>
+) => {
   const quadCenter = getCenter(tree);
 
   if (element.x < quadCenter.x) {
@@ -691,7 +692,7 @@ const calculateDirection = (element: ElementRect, tree: QuadTree) => {
 };
 
 // Returns splitted coordinates and dimensions.
-const splitTree = (tree: QuadTree) => {
+const splitTree = <T extends BasicRectangle>(tree: QuadTree<T>) => {
   const leftWidth = Math.max(Math.floor(tree.width / 2), 1);
   const rightWidth = Math.ceil(tree.width / 2);
   const topHeight = Math.max(Math.floor(tree.height / 2), 1);
@@ -725,7 +726,7 @@ const splitTree = (tree: QuadTree) => {
 };
 
 // Validates a potential element of the tree.
-const validateElement = (element: ElementRect) => {
+const validateElement = <T extends BasicRectangle>(element: T) => {
   if (!(typeof element === "object")) {
     throw new Error("Element must be an Object.");
   }
@@ -738,7 +739,7 @@ const validateElement = (element: ElementRect) => {
 };
 
 // Determines wether an element fits into subtrees.
-const fitting = (element: ElementRect, tree: QuadTree) => {
+const fitting = <T extends BasicRectangle>(element: T, tree: QuadTree<T>) => {
   const where: Array<string> = [];
   const object = splitTree(tree);
   for (let direction in object) {
